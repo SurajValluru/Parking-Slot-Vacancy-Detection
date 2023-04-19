@@ -1,0 +1,1 @@
+# !python detect.py --source scene.png --weights best.pt --conf 0.4
