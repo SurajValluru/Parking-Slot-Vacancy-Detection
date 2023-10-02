@@ -65,7 +65,8 @@ def onkeypress(event):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('image_path', help="Path of image file")
+    parser.add_argument('input_path', help="Path of the video file")
+    # parser.add_argument('image_path', help="Path of image file")
     parser.add_argument('--out_file', help="Name of the output file", default="regions.p")
     args = parser.parse_args()
 
@@ -81,18 +82,29 @@ if __name__ == '__main__':
     print("> After marking a quadrilateral press 'n' to save current quadrilateral and then press 'q' to start marking a new quadrilateral")
     print("> When you are done press 'b' to Exit the program\n")
 
-    IMAGE_PATH = args.image_path
-    cnt=0
-    rgb_image = cv2.imread(IMAGE_PATH)
-    rgb_image = rgb_image[:, :, ::-1]
-    # while image_capture.isOpened():
-    #     success, frame = image_capture.read()
-    #     if not success:
-    #         break
-    #     if cnt == 5:
-    #         rgb_image = frame[:, :, ::-1]
-    #     cnt += 1
-    # image_capture.release()
+    # Load the video file
+    video_path = args.input_path
+    cap = cv2.VideoCapture(video_path)
+
+    # Check if the video file is opened successfully
+    if not cap.isOpened():
+        print("Error: Unable to open video file.")
+        exit()
+
+    # Read the first frame from the video
+    ret, frame = cap.read()
+
+    # Check if the frame was read successfully
+    if not ret:
+        print("Error: Unable to read the first frame from the video.")
+        exit()
+
+    # Close the video file
+    cap.release()
+
+    # Convert the frame from BGR to RGB format
+    rgb_image = frame[:, :, ::-1]
+
 
     while True:
         fig, ax = plt.subplots()

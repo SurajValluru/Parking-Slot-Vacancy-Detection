@@ -51,18 +51,15 @@ def compute_overlaps(parked_car_boxes, car_boxes): # We have written this functi
             polygon2_shape = shapely_poly(pol2_xy) 
 
             #calculating the IOU and storing them in 2D array
-
-            polygon_intersection = polygon1_shape.intersection(polygon2_shape).area 
-            slot_area = polygon1_shape.area
-            # IOU = polygon_intersection
-            IOU = polygon_intersection / slot_area
-            overlaps[i][j] = IOU
+            if polygon1_shape.intersects(polygon2_shape): 
+                polygon_intersection = polygon1_shape.intersection(polygon2_shape).area 
+                slot_area = polygon1_shape.area
+                # IOU = polygon_intersection
+                IOU = polygon_intersection / slot_area
+                overlaps[i][j] = IOU
+            else:
+                overlaps[i][j] = 0
     return overlaps
-
-
-# %matplotlib inline
-# %config InlineBackend.figure_format = 'retina' # For high res images
-
 
 def get_predictions(img_path, threshold=0.5, rect_th=5, text_size=0.4, text_th=3):
     car_boxes = []
@@ -96,7 +93,7 @@ if(__name__ == "__main__"):
     os.chdir('yolov5')
     parser = argparse.ArgumentParser()
     parser.add_argument('video_path', help="Path of video file")
-    parser.add_argument('regions_path', help="Path of regions file")
+    parser.add_argument('--regions_path', help="Path of regions file", default="regions.p")
     args = parser.parse_args()
 
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s', force_reload=True)  # force_reload = recache latest code
